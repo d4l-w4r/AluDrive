@@ -29,7 +29,7 @@ import javax.crypto.spec.PBEParameterSpec;
 import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 
-import utils.DummyConfigOptions;
+import utils.ConfigOptions;
 
 public class KeyGen implements Observer {
 	
@@ -56,7 +56,7 @@ public class KeyGen implements Observer {
 		// private key
 		byte[] encodedprivkey = keyPair.getPrivate().getEncoded();
 		byte[] encodedPubKey = keyPair.getPublic().getEncoded();
-		FileOutputStream out = new FileOutputStream(DummyConfigOptions.PUBLIC_KEY_PATH);
+		FileOutputStream out = new FileOutputStream(ConfigOptions.PUBLIC_KEY_PATH);
 		out.write(encodedPubKey);
 		out.close();
 		// int count = 20;// hash iteration count TODO: Experiment for optimal
@@ -69,10 +69,10 @@ public class KeyGen implements Observer {
 		// Create PBE parameter set
 		PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, count);
 		PBEKeySpec pbeKeySpec = new PBEKeySpec(passphrase.toCharArray());
-		SecretKeyFactory keyFac = SecretKeyFactory.getInstance(DummyConfigOptions.PBE_MODE);
+		SecretKeyFactory keyFac = SecretKeyFactory.getInstance(ConfigOptions.PBE_MODE);
 		SecretKey pbeKey = keyFac.generateSecret(pbeKeySpec);
 
-		Cipher pbeCipher = Cipher.getInstance(DummyConfigOptions.PBE_MODE);
+		Cipher pbeCipher = Cipher.getInstance(ConfigOptions.PBE_MODE);
 
 		// Initialize PBE Cipher with key and parameters
 		pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
@@ -81,13 +81,13 @@ public class KeyGen implements Observer {
 		byte[] ciphertext = pbeCipher.doFinal(encodedprivkey);
 
 		// Now construct PKCS #8 EncryptedPrivateKeyInfo object
-		AlgorithmParameters algparms = AlgorithmParameters.getInstance(DummyConfigOptions.PBE_MODE);
+		AlgorithmParameters algparms = AlgorithmParameters.getInstance(ConfigOptions.PBE_MODE);
 		algparms.init(pbeParamSpec);
 		EncryptedPrivateKeyInfo encinfo = new EncryptedPrivateKeyInfo(algparms,
 				ciphertext);
 
 		// Saving the key info to file
-		FileOutputStream fos = new FileOutputStream(DummyConfigOptions.PRIVATE_KEY_PATH);
+		FileOutputStream fos = new FileOutputStream(ConfigOptions.PRIVATE_KEY_PATH);
 		fos.write(encinfo.getEncoded());
 		fos.close();
 	}

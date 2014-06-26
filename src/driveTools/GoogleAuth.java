@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import utils.DummyConfigOptions;
+import utils.ConfigOptions;
 import utils.ErrorDialog;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -34,7 +35,7 @@ public class GoogleAuth {
 	
 	public GoogleAuth(EncryptionAPI crypt) {
 		_crypt = crypt;
-		if(!new java.io.File(DummyConfigOptions.CRED_STORE_PATH).exists()) {
+		if(!new java.io.File(ConfigOptions.CRED_STORE_PATH).exists()) {
 			_cred = makeCredential();
 		} else {
 			_cred = readCredential();
@@ -50,16 +51,17 @@ public class GoogleAuth {
 		    
 		    String url = flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI).build();
 		    
-		    /**System.out.println("Please type in your authorization code");
+		    System.out.println("Please type in your authorization code");
 		    WebViewTrial browser = new WebViewTrial();
 		    browser.setVisible(true);
 		    browser.loadURL(url);
 		    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		    String code = br.readLine();*/
-		    //TODO: Implement WebView to handle token authorization
-		    String code = null;
-		    GoogleTokenResponse response;
-			try {
+		    try {
+			    String code = br.readLine();
+			    //TODO: Implement WebView to handle token authorization
+			    //String code = null;
+			    GoogleTokenResponse response;
+			
 				response = flow.newTokenRequest(code).setRedirectUri(REDIRECT_URI).execute();
 				GoogleCredential cred = new GoogleCredential().setFromTokenResponse(response);
 			    storeCredential(cred);
@@ -75,7 +77,7 @@ public class GoogleAuth {
 	
 	private void storeCredential(GoogleCredential cred) {
 			//TODO: Enable encryption for the credential store
-		  java.io.File f = new java.io.File(DummyConfigOptions.CRED_STORE_PATH);
+		  java.io.File f = new java.io.File(ConfigOptions.CRED_STORE_PATH);
 		  
 		  byte[] token = cred.getAccessToken().getBytes();
 		  byte[] expiry = cred.getExpirationTimeMilliseconds().toString().getBytes();
@@ -96,7 +98,7 @@ public class GoogleAuth {
 		GoogleCredential cred = new GoogleCredential();
 		//TODO: Enable decryption from credStore
 		  try {
-			  java.io.File inf = new java.io.File(DummyConfigOptions.CRED_STORE_PATH);
+			  java.io.File inf = new java.io.File(ConfigOptions.CRED_STORE_PATH);
 			  FileReader fReader = new FileReader(inf);
 			  BufferedReader reader = new BufferedReader(fReader);
 			  String token = reader.readLine();

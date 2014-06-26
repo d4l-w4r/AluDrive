@@ -7,6 +7,9 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 
+import utils.ConfigOptions;
+
+
 
 
 public class MainWinGUI extends JFrame {
@@ -101,7 +104,7 @@ public class MainWinGUI extends JFrame {
 	private JPanel initLeftPanel()
 	{
 		JPanel content = new JPanel();
-		FileTree treeModel = new FileTree (new File("C:\\Users\\2fschulz"));
+		FileTree treeModel = new FileTree (new File(ConfigOptions.FILETREE_ROOT_PATH));
 		//JTree tree = new JTree();
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.setPreferredSize(new Dimension(200, 450));

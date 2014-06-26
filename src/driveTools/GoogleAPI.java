@@ -16,5 +16,8 @@ public class GoogleAPI {
 		_backend.upload(src, meta);
 	}
 	
+	public static void main(String[] args) {
+		new GoogleAPI(new EncryptionAPI());
+	}
 	//TODO: implement all the other file operations
 }

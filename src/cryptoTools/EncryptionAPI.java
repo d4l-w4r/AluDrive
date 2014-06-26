@@ -7,16 +7,16 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.NoSuchPaddingException;
 
-import utils.DummyConfigOptions;
+import utils.ConfigOptions;
 
 public class EncryptionAPI {
 	private EncryptionBackend _backend;
 
 	public EncryptionAPI() {
 		String pw;
-		if (!new File(DummyConfigOptions.PRIVATE_KEY_PATH)
+		if (!new File(ConfigOptions.PRIVATE_KEY_PATH)
 				.exists()
-				|| !new File(DummyConfigOptions.PUBLIC_KEY_PATH)
+				|| !new File(ConfigOptions.PUBLIC_KEY_PATH)
 						.exists()) {
 			KeyGen keygen = new KeyGen();
 			//retrieve the passphrase from the text input before destroying 
@@ -24,7 +24,7 @@ public class EncryptionAPI {
 			//TODO: save a hashed version of the give password in a file so we can compare it 
 			//with the PasswordPrompt input (jBCrypt)
 			pw = keygen.getPassphrase(); 
-			while(!new File(DummyConfigOptions.PUBLIC_KEY_PATH).exists()) {
+			while(!new File(ConfigOptions.PUBLIC_KEY_PATH).exists()) {
 				//waiting for keypair creation
 			}
 			//keygen.kill();

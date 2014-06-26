@@ -1,16 +1,10 @@
 import java.io.File;
 
-import javax.swing.JButton;
-
-import org.mindrot.jbcrypt.BCrypt;
-
 import cryptoTools.EncryptionAPI;
 
 
 public class CLI {
 	
-	public static final String homeDir = "/home/daniel/Desktop/encryptionTest/";
-
 	public static void main(String[] args) {
 		EncryptionAPI api = new EncryptionAPI();
 		
