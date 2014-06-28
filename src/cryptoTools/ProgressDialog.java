@@ -12,12 +12,12 @@ import javax.swing.JProgressBar;
 public class ProgressDialog extends JDialog{
 	private static final long serialVersionUID = -1333006562248666252L;
 
-	public ProgressDialog() {
+	public ProgressDialog(String title, String body) {
 		super();
 		JPanel content = new JPanel();
 		this.setResizable(false);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		this.setTitle("Waiting...");
+		this.setTitle(title);
 		this.getContentPane().add(content);
 		content.setLayout(new BorderLayout(10, 20));
 		
@@ -26,7 +26,7 @@ public class ProgressDialog extends JDialog{
 		
 		JPanel headerPanel = new JPanel();
 		headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-		headerPanel.add(new JLabel("Creating your key pair..."));
+		headerPanel.add(new JLabel(body));
 		
 		content.add(headerPanel, BorderLayout.PAGE_START);
 		content.add(Box.createVerticalStrut(15), BorderLayout.CENTER);

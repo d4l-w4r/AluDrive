@@ -29,7 +29,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import utils.DummyConfigOptions;
+import utils.ConfigOptions;
 
 public class EncryptionBackend {
 	
@@ -37,16 +37,14 @@ public class EncryptionBackend {
 	private final SecretKeySpec _aesKeySpec;
 	private Cipher pkCipher, aesCipher;
 	private final char[] _passphrase;
-	/*
-	 * TODO: Replace 'DummyConfigOptions.*' with actual ConfigOptions
-	 */
+	
 	public EncryptionBackend(String passphrase) throws NoSuchAlgorithmException, NoSuchPaddingException{
 
 		pkCipher = Cipher.getInstance("RSA");
 		aesCipher = Cipher.getInstance("AES");
 		_passphrase = passphrase.toCharArray();
 
-		if(!new File(DummyConfigOptions.AES_KEY_PATH).exists()) {
+		if(!new File(ConfigOptions.AES_KEY_PATH).exists()) {
 			HashMap<String, Object> keySpecPair = new HashMap<>();
 			try{
 				keySpecPair = makeKey();
@@ -59,7 +57,7 @@ public class EncryptionBackend {
 			_aesKeySpec = (SecretKeySpec) keySpecPair.get("spec");
 			
 			try{
-				saveKey(new File(DummyConfigOptions.AES_KEY_PATH));
+				saveKey(new File(ConfigOptions.AES_KEY_PATH));
 			} catch(GeneralSecurityException | IOException e) {
 				new utils.ErrorDialog(e);
 				e.printStackTrace();
@@ -68,7 +66,7 @@ public class EncryptionBackend {
 		else {
 			HashMap<String, Object> keySpecPair = new HashMap<>();
 			try{
-				keySpecPair = this.loadKey(new File(DummyConfigOptions.AES_KEY_PATH));
+				keySpecPair = this.loadKey(new File(ConfigOptions.AES_KEY_PATH));
 			} catch(GeneralSecurityException | IOException e) {
 				new utils.ErrorDialog(e);
 				e.printStackTrace();
@@ -91,7 +89,7 @@ public class EncryptionBackend {
 	 */
 	private HashMap<String, Object> makeKey() throws NoSuchAlgorithmException {
 		KeyGenerator kgen = KeyGenerator.getInstance("AES");
-		kgen.init(DummyConfigOptions.AES_KEY_SIZE);
+		kgen.init(new Integer(ConfigOptions.AES_KEY_SIZE));
 		SecretKey key = kgen.generateKey();
 		byte[] aesKey = key.getEncoded();
 		SecretKeySpec aesKeySpec = new SecretKeySpec(aesKey, "AES");
@@ -107,11 +105,11 @@ public class EncryptionBackend {
 	 */
 	private HashMap<String, Object> loadKey(File in)
 			throws GeneralSecurityException, IOException {
-		PrivateKey pk = this.decryptPrivKey(new File(DummyConfigOptions.PRIVATE_KEY_PATH));
+		PrivateKey pk = this.decryptPrivKey(new File(ConfigOptions.PRIVATE_KEY_PATH));
 
 		// read AES key
 		pkCipher.init(Cipher.DECRYPT_MODE, pk);
-		byte[] aesKey = new byte[DummyConfigOptions.AES_KEY_SIZE / 8];
+		byte[] aesKey = new byte[new Integer(ConfigOptions.AES_KEY_SIZE) / 8];
 		CipherInputStream is = new CipherInputStream(new FileInputStream(in),
 				pkCipher);
 		is.read(aesKey);
@@ -129,7 +127,7 @@ public class EncryptionBackend {
 	 */
 	private void saveKey(File out) throws IOException,
 			GeneralSecurityException {
-		File pubKey = new File(DummyConfigOptions.PUBLIC_KEY_PATH);
+		File pubKey = new File(ConfigOptions.PUBLIC_KEY_PATH);
 		// read public key to be used to encrypt the AES key
 		byte[] encodedKey = new byte[(int) pubKey.length()];
 		new FileInputStream(pubKey).read(encodedKey);
@@ -162,7 +160,7 @@ public class EncryptionBackend {
 		PBEKeySpec pbeKeySpec = new PBEKeySpec(_passphrase);
 		Cipher cipher = Cipher.getInstance(encInfo.getAlgName());
 
-		SecretKeyFactory secretKeyFac = SecretKeyFactory.getInstance(DummyConfigOptions.PBE_MODE);
+		SecretKeyFactory secretKeyFac = SecretKeyFactory.getInstance(ConfigOptions.PBE_MODE);
 		cipher.init(Cipher.DECRYPT_MODE,
 				secretKeyFac.generateSecret(pbeKeySpec),
 				encInfo.getAlgParameters());

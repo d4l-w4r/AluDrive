@@ -46,6 +46,6 @@ public class ErrorDialog extends JDialog{
 	}
 	
 	public static void main(String[] args) {
-		new ErrorDialog(new Throwable("This is a test to see, \nhow the Dialog I employed handles\n multiline text."));
+		new ErrorDialog(new Throwable("<html>This is a test to see,<br>how the Dialog I employed handles multiline text.</html>"));
 	}
 }
