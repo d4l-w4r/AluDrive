@@ -19,15 +19,12 @@ public class EncryptionAPI {
 				|| !new File(ConfigOptions.PUBLIC_KEY_PATH)
 						.exists()) {
 			KeyGen keygen = new KeyGen();
-			//retrieve the passphrase from the text input before destroying 
-			//the dialog
 			//TODO: save a hashed version of the give password in a file so we can compare it 
 			//with the PasswordPrompt input (jBCrypt)
 			pw = keygen.getPassphrase(); 
 			while(!new File(ConfigOptions.PUBLIC_KEY_PATH).exists()) {
 				//waiting for keypair creation
 			}
-			//keygen.kill();
 		} else {
 			PasswordPrompt prompt = new PasswordPrompt();
 			pw = prompt.reveal();
@@ -46,6 +43,11 @@ public class EncryptionAPI {
 	}
 	
 	public void encryptFile(File in, File out) {
+		if(in.isDirectory()) {
+			//TODO: Handle properly
+			System.err.println("ERROR (cryptoTools.EncryptionAPI): The file " + in.getPath() + " is a directory.");
+			return;
+		}
 		try{
 			_backend.encrypt(in, out);
 		} catch(IOException | InvalidKeyException e) {

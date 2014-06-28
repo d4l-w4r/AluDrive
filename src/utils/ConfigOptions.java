@@ -9,8 +9,9 @@ public class ConfigOptions {
 	private static String USER_HOME = System.getProperty("user.home");
 	
 	//FileSystem Settings
-	public static String FILETREE_ROOT_PATH = getPref("FILETREE_ROOT_PATH", USER_HOME + FS);
+	public static String FILETREE_ROOT_PATH = getPref("FILETREE_ROOT_PATH", USER_HOME + FS + "Desktop");
 	public static String BASEPATH = getPref("BASEPATH", USER_HOME + FS + ".aluDrive" + FS);
+	public static String TMP_FOLDER = getPref("TMP_FOLDER", System.getProperty("java.io.tmpdir") + FS);
 		
 	//Crypto Settings
 	public static String CRYPTPATH = getPref("CRYPTPATH", BASEPATH + "crypt" + FS);
@@ -23,7 +24,7 @@ public class ConfigOptions {
 	
 	//Google Settings
 	public static String CRED_STORE_PATH = getPref("CRED_STORE_PATH", BASEPATH + "credstore");
-	
+	public static String FILE_SYNC_PATH = getPref("FILE_SYNC_PATH", BASEPATH + "drive_sync" + FS);
 	
 	
 	

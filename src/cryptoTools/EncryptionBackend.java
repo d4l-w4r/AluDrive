@@ -37,9 +37,7 @@ public class EncryptionBackend {
 	private final SecretKeySpec _aesKeySpec;
 	private Cipher pkCipher, aesCipher;
 	private final char[] _passphrase;
-	/*
-	 * TODO: Replace 'DummyConfigOptions.*' with actual ConfigOptions
-	 */
+	
 	public EncryptionBackend(String passphrase) throws NoSuchAlgorithmException, NoSuchPaddingException{
 
 		pkCipher = Cipher.getInstance("RSA");

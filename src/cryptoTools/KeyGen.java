@@ -101,7 +101,7 @@ public class KeyGen implements Observer {
 		((KeyGenDialog) obs).kill();
 		pw = new String((char[]) obj);
 
-		final ProgressDialog pd = new ProgressDialog();
+		final ProgressDialog pd = new ProgressDialog("Waiting", "<html>Creating your keypair.<br>This can take a while...</html>");
 		SwingWorker<Void, Void> wk = new SwingWorker<Void, Void>() {
 
 			@Override

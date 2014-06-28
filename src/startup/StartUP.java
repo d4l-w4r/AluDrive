@@ -49,6 +49,14 @@ public class StartUP {
 				new ErrorDialog(new Throwable("<html>Could not create the path<br>"+ConfigOptions.BASEPATH+"<br>Please check that you have sufficient permissions.<br></html>"));
 			}
 		}
+        if(!new File(ConfigOptions.FILE_SYNC_PATH).exists()) {
+			try {
+				File name = new File(ConfigOptions.FILE_SYNC_PATH);
+				name.mkdirs();
+			} catch(SecurityException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public static void debugProperties() {
