@@ -6,6 +6,9 @@ Google Drive client that uploads an encrypted version of your files
 REQUIREMENTS:
 =============
 - Oracle Java 8
+(Depending on your install it might be necessary to install the Java JCE from http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html
+and drag the two .jar files to {java-jre-home}/lib/security. 
+Otherwise the cryptoTools.EncryptionBackend will throw java.security.InvalidKeyException)
 
 The following .jars can be found at the specified locations in the dependencies.zip file in the repository. **Please make sure to place them all in your java build path**
 - aludrive/crypt/*jbcrypt-0.3m.jar* 
