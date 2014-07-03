@@ -20,7 +20,9 @@ import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 
 import utils.ConfigOptions;
+import utils.MimeTypes;
 
+import com.google.api.client.googleapis.media.MediaHttpUploader.UploadState;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.drive.model.File;
 
@@ -34,42 +36,78 @@ public class GoogleAPI {
 	
 	public GoogleAPI(EncryptionAPI crypt) {
 		_auth = new GoogleAuth(crypt);
-		boolean success = false;
-		try {
-			success = _auth.refreshAccessToken();
-		} catch(IOException e) {
-			System.err.println("ERROR (driveTools.GoogleAPI): IOException while trying to refresh token.\n" + e.getMessage());
-		}
-		System.out.println("DEBUG (driveTools.GoogleAPI): Token refreshed: " + success);
 		_backend = new GoogleBackend(_auth.getCredential());
 	}
 	
+	/**
+	 * Uploads a given file and its MetaData object to Google Drive
+	 * and synchronizes the header files in FILE_SYNC_PATH
+	 * 
+	 * @param java.io.File src 
+	 * @param meta
+	 */
 	public void upload(java.io.File src, MetaData meta) {
 		if(!src.exists()) {
 			//TODO: Handle properly
 			System.err.println("ERROR (driveTools.GoogleAPI): The selected file (" + src.getPath() + ") doesn't exist.");
 			return;
 		}
-		_backend.upload(src, meta);
-		fetchDriveContents();
+		if(src.isDirectory()) {
+			//create Drive folder
+			String folderID = _backend.mkdir(new MetaData(src.getName(), MimeTypes.getType(".googlDir")));
+			java.io.File[] files = src.listFiles();
+			for(java.io.File f: files) {
+				if(!f.isDirectory()) {
+					//upload(f, new MetaData(f.getName(), MimeTypes.getType(f.getAbsolutePath())));
+					_backend.upload(f, new MetaData(f.getName(), MimeTypes.getType(f.getAbsolutePath())), folderID);
+					src.delete();
+				} 
+			}
+		} else {
+			_backend.upload(src, meta);
+		}
+		src.delete();
 	}
 	
+	/**
+	 * Synchronizes the contents on google Drive with the header files on the 
+	 * local file system.
+	 * After this function returns the files in the FILE_SYNC_PATH and on the
+	 * Google Drive should be the same.
+	 */
 	public void fetchDriveContents() {
 		_backend.fetchContents();
+		//_backend.getRemoteData();
 	}
 	
-	public void list() {
+	/**
+	 * Prints a list of all files on the Google Drive to stdout.
+	 * Format: $Filename at:	$linkToFile
+	 */
+	public void listRemoteContents() {
 		List<File> list = _backend.list();
-		File f = list.get(0);
-		System.out.println("DEBUG (driveTools.GoogleAPI): Filename: " + f.getTitle());
-		System.out.println("DEBUG (driveTools.GoogleAPI): Url: " + f.getDownloadUrl());
-		System.out.println("DEBUG (driveTools.GoogleAPI): Size: " + f.getFileSize());
+		System.out.println("Listing remote files: \n");
+		for (File f:list) {
+			System.out.println(f.getTitle() + " at:\t " + f.getAlternateLink());
+		}
+	}
+	
+	/**
+	 * Prints a list of all header files in FILE_SYNC_PATH to stdout.
+	 * Format: $Filename at:	$/ABSOLUTE/PATH/TO/FILE
+	 */
+	public void listLocalContents() {
+		java.io.File[] files = new java.io.File(ConfigOptions.FILE_SYNC_PATH).listFiles();
+		System.out.println("Listing locally stored header files: \n");
+		for (java.io.File f: files) {
+			System.out.println(f.getName() + " at:\t " + f.getAbsolutePath());
+		}
 	}
 	
 	public static void main(String[] args) {
 		GoogleAPI api = new GoogleAPI(new EncryptionAPI());
-		api.fetchDriveContents();
-		api.list();
+		//api.fetchDriveContents();
+		api.listRemoteContents();
 	} 
 	//TODO: implement all the other file operations
 }

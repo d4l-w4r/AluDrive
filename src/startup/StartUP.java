@@ -1,13 +1,19 @@
 package startup;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.Properties;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import org.python.core.util.FileUtil;
+import org.python.google.common.io.Files;
 
 import utils.ConfigOptions;
 import utils.ErrorDialog;
@@ -18,7 +24,7 @@ public class StartUP {
 
 	public static void main(String[] args) {
 		checkSetUp();
-		
+		//debugProperties();
 		try {
 			// Set System L&F
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -57,6 +63,16 @@ public class StartUP {
 				e.printStackTrace();
 			}
 		}
+        if(!new File(ConfigOptions.PYTHON_FILE_PATH).exists()) {
+        	try {
+        		File name = new File(ConfigOptions.PYTHON_FILE_PATH);
+        		name.mkdirs();
+        		//Files.copy(new File("../../pyTools/fileLoader.py"), new File(ConfigOptions.PYTHON_FILE_PATH + "fileLoader.py"));
+        	} catch(SecurityException e) {
+        		e.printStackTrace();
+        	}
+        	
+        }
 	}
 	
 	public static void debugProperties() {

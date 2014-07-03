@@ -26,7 +26,8 @@ public class ConfigOptions {
 	public static String CRED_STORE_PATH = getPref("CRED_STORE_PATH", BASEPATH + "credstore");
 	public static String FILE_SYNC_PATH = getPref("FILE_SYNC_PATH", BASEPATH + "drive_sync" + FS);
 	
-	
+	//Jython Settings
+	public static String PYTHON_FILE_PATH = getPref("PYTHON_FILE_PATH", BASEPATH + "pyTools" + FS);
 	
 	public static String getPref(String key, String def) {
 		Preferences prefs = Preferences.userNodeForPackage(ConfigOptions.class);

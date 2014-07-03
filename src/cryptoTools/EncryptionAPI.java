@@ -7,7 +7,10 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.NoSuchPaddingException;
 
+import driveTools.MetaData;
+
 import utils.ConfigOptions;
+import utils.MimeTypes;
 
 public class EncryptionAPI {
 	private EncryptionBackend _backend;
@@ -45,14 +48,25 @@ public class EncryptionAPI {
 	public void encryptFile(File in, File out) {
 		if(in.isDirectory()) {
 			//TODO: Handle properly
-			System.err.println("ERROR (cryptoTools.EncryptionAPI): The file " + in.getPath() + " is a directory.");
-			return;
-		}
-		try{
-			_backend.encrypt(in, out);
-		} catch(IOException | InvalidKeyException e) {
-			new utils.ErrorDialog(e);
-			e.printStackTrace();
+			//System.err.println("ERROR (cryptoTools.EncryptionAPI): The file " + in.getPath() + " is a directory.");
+			//return;
+			if(in.isDirectory()) {
+				java.io.File tmp = new java.io.File(ConfigOptions.TMP_FOLDER + in.getName() + System.getProperty("file.separator"));
+				tmp.mkdir();
+				java.io.File[] files = in.listFiles();
+				for(java.io.File f: files) {
+					if(!f.isDirectory()) {
+						encryptFile(f, new java.io.File(out.getAbsolutePath() + System.getProperty("file.separator") + f.getName()));
+					}
+				}
+			}
+		} else {
+			try{
+				_backend.encrypt(in, out);
+			} catch(IOException | InvalidKeyException e) {
+				new utils.ErrorDialog(e);
+				e.printStackTrace();
+			}
 		}
 	}
 	
