@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=AluDrive
+Icon=/home/daniel/.icons/aluDrive-logo.png
+Comment=Manages Google Drive with PGP encryption
+Exec=java -jar /home/daniel/Desktop/aluDrive.jar %U
+Type=Application
+Categories=Security;Accessories;Internet;Developer;
+Terminal=true
+StartupNotify=false
+
+Keywords=encryption;encrypt;Google;google;AluDrive;aludrive;Aludrive;drive;
+
+
