@@ -2,79 +2,48 @@ package driveTools;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class DriveFileModel extends File {
-	private static final long serialVersionUID = -1893670515297466089L;
+public class DriveFileModel{
 
-	private final String _url;
-	private String _parent;
-	private final String _size;
+//	private String _url;
+//	private String _parent;
+//	private String _size;
+	private String _mime;
+	private String _id;
+	//private String _title;
 	
 	/**
-	 * Constructor for initializing DriveFileModel when a new file is created
-	 * 
-	 * @param filename
-	 * @param downloadUrl
-	 * @param filesize
-	 * @throws IOException
-	 */
-	public DriveFileModel(String filename, String downloadUrl, String filesize, String parent) {
-		super(filename);
-		_url = downloadUrl;
-		_size = filesize;
-		_parent = parent;
-		byte[] url = downloadUrl.getBytes();
-		byte[] size = filesize.getBytes();
-		try {
-			FileOutputStream fos = new FileOutputStream(this);
-			if(!_parent.equals("")) {
-				fos.write(_parent.getBytes());
-				fos.write("\n".getBytes());
-			} else {
-				fos.write("None".getBytes());
-				fos.write("\n".getBytes());
-			}
-			fos.write(url);
-			fos.write("\n".getBytes());
-			fos.write(size);
-			fos.close();
-			
-			this.setWritable(false);
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Overloaded constructor for initializing DriveFileModel when Model
+	 * Constructor for initializing DriveFileModel when Model
 	 * is already present in 
 	 * @param filename
 	 * @throws IOException
 	 */
 	public DriveFileModel(String filename) {
-		super(filename);
-		assert(new File(filename).exists());
-		String url = null;
-		String size = null;
+		File src = new File(filename);
+		FileReader fReader;
 		try {
-			FileReader fReader = new FileReader(this);
+			fReader = new FileReader(src);
+		
 			BufferedReader reader = new BufferedReader(fReader);
-			_parent = reader.readLine();
-			url = reader.readLine();
-			size = reader.readLine();
+//			_parent = reader.readLine();
+//			_url = reader.readLine();
+//			_size = reader.readLine();
+			_id = reader.readLine();
+			_mime = reader.readLine();
+			//_title = reader.readLine();
 			reader.close();
-			this.setWritable(false);
-		} catch(IOException e) {
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		_url = url;
-		_size = size;
+		System.out.println("DEBUG (driveTools.DriveFileModel: 43): FileModel intialized. ID: " + _id + " MIME: " + _mime);
 	}
 	
-	public String getDownloadUrl() {
+	/*public String getDownloadUrl() {
 		return _url;
 	}
 	
@@ -85,4 +54,16 @@ public class DriveFileModel extends File {
 	public String getParent() {
 		return _parent;
 	}
+	*/
+	public String getMime() {
+		return _mime;
+	}
+	
+	public String getID() {
+		return _id;
+	}
+	
+	/*public String getTitle() {
+		return _title;
+	}*/
 }

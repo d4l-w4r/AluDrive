@@ -5,9 +5,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +28,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
 import com.google.api.client.http.FileContent;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -84,7 +90,7 @@ public class GoogleBackend {
 			@Override
 			public void propertyChange(PropertyChangeEvent arg0) {
 				if (arg0.getNewValue() == StateValue.STARTED) {
-					pd.setModalityType(ModalityType.APPLICATION_MODAL);
+					pd.setModalityType(ModalityType.MODELESS);
 					pd.setVisible(true);
 				} else {
 					pd.dispose();
@@ -148,7 +154,7 @@ public class GoogleBackend {
 			@Override
 			public void propertyChange(PropertyChangeEvent arg0) {
 				if (arg0.getNewValue() == StateValue.STARTED) {
-					pd.setModalityType(ModalityType.APPLICATION_MODAL);
+					pd.setModalityType(ModalityType.MODELESS);
 					pd.setVisible(true);
 				} else {
 					pd.dispose();
@@ -169,6 +175,32 @@ public class GoogleBackend {
 			e.printStackTrace();
 		}
 	}
+
+	protected InputStream download(DriveFileModel model) {
+		File file;
+		try {
+			file = _service.files().get(model.getID()).execute();
+		
+			String downloadUrl = file.getDownloadUrl();
+			
+			if (downloadUrl.length() > 0) {
+		     
+		        HttpResponse resp =
+		            _service.getRequestFactory().buildGetRequest(new GenericUrl(downloadUrl))
+		                .execute();
+		        return resp.getContent();
+		        
+			} else {
+		      	System.out.println("DEBUG (driveTools.GoogleBackend: 194): File doesn't have any content on the store");
+		      	return null;
+		    } 
+		} catch(IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+	
 
 	protected List<File> list() {
 		List<File> result = new ArrayList<File>();
@@ -199,7 +231,7 @@ public class GoogleBackend {
 				"Syncing Google Drive",
 				"<html>Pulling header files from your Google Drive.<br>Depending on your connection, this can take a while</html>");
 
-		SwingWorker<Void, Void> wk = new SwingWorker<Void, Void>() {
+		SwingWorker wk = new SwingWorker() {
 			@Override
 			protected Void doInBackground() throws Exception {
 				// TODO: handle drive folders
@@ -212,9 +244,9 @@ public class GoogleBackend {
 
 			@Override
 			public void propertyChange(PropertyChangeEvent arg0) {
-				if (arg0.getNewValue() == StateValue.STARTED) {
+				if (arg0.getNewValue().equals(StateValue.STARTED)) {
 					System.out.println("Process Started");
-					pd.setModalityType(ModalityType.APPLICATION_MODAL);
+					pd.setModalityType(ModalityType.MODELESS);
 					pd.setVisible(true);
 				} else if (arg0.getNewValue().equals(StateValue.DONE)) {
 					pd.dispose();
@@ -254,15 +286,18 @@ public class GoogleBackend {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+		//String sep = System.getProperty("line.seperator");
+		String sep = "\n";
 		try {
 			FileOutputStream fos = new FileOutputStream(new java.io.File(ConfigOptions.PYTHON_FILE_PATH + "data.py"));
-			fos.write(new String("PATH = \"" + ConfigOptions.FILE_SYNC_PATH + "\"").getBytes());
-			fos.write("\n".getBytes());
+			fos.write(new String("PATH = \"" + ConfigOptions.FILE_HEADER_PATH + "\"").getBytes());
+			fos.write(sep.getBytes());
 			fos.write(new String("driveRoot = \"" + root + "\"").getBytes());
-			fos.write("\n".getBytes());
-			fos.write("false = 'false'\n".getBytes());
-			fos.write("true = 'true'\n".getBytes());
+			fos.write(sep.getBytes());
+			fos.write("false = 'false'".getBytes());
+			fos.write(sep.getBytes());
+			fos.write("true = 'true'".getBytes());
+			fos.write(sep.getBytes());
 			fos.write(new String("data = " + dumpString).getBytes());
 			fos.close();
 		} catch(IOException e) {

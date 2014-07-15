@@ -23,21 +23,24 @@ public class MainWinGUI extends JFrame {
 	public JButton upload;
 	public JButton download;
 	public JButton delete;
-	public JTree tree;
+	public JButton refresh;
+	
+	public FileTree localTree;
+	public FileTree remoteTree;
 	public JMenuItem loadFile;
 	
-	public MainWinGUI()
+	public MainWinGUI(java.io.File localRoot, java.io.File remoteRoot)
 	{
 		super("GDrive File Coder");	
 		this.setSize(700, 500);
 		
 		JPanel menuPane = initMenuPanel();
 		this.setJMenuBar(initMenuBar());
-		_paneLeft = initLeftPanel();
-		_paneRight = initRightPanel();
+		_paneLeft = initLeftPanel(localRoot);
+		_paneRight = initRightPanel(remoteRoot);
 		
 
-			
+		
 		this.getContentPane().setLayout(new BorderLayout());
 		//this.getContentPane().add(menuPane, BorderLayout.NORTH);
 		this.getContentPane().add(_contentPane, BorderLayout.CENTER);
@@ -49,8 +52,9 @@ public class MainWinGUI extends JFrame {
 		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setPreferredSize(new Dimension(700, 504));
+		this.setLocationRelativeTo(null);
 		this.pack();
-		this.setResizable(false);
+		this.setResizable(true);
 		this.setVisible(true);
 	}
 	
@@ -73,6 +77,12 @@ public class MainWinGUI extends JFrame {
 		delete.setPreferredSize(new Dimension(90, 30));
 		delPanel.add(delete);
 		
+		JPanel refPanel = new JPanel();
+		refPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		refresh = new JButton("Refresh");
+		refresh.setPreferredSize(new Dimension(90,30));
+		refPanel.add(refresh);
+		
 		JPanel menuPane = new JPanel();
 		//menuPane.setBackground(Color.white);
 		menuPane.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -84,6 +94,7 @@ public class MainWinGUI extends JFrame {
 		menuPane.add(delPanel);
 		menuPane.add(downPanel);
 		menuPane.add(upPanel);
+		menuPane.add(refPanel);
 		menuPane.add(Box.createVerticalStrut(250));
 		return menuPane;
 	}
@@ -101,25 +112,26 @@ public class MainWinGUI extends JFrame {
 		return bar;
 	}
 	
-	private JPanel initLeftPanel()
+	private JPanel initLeftPanel(java.io.File dir)
 	{
 		JPanel content = new JPanel();
-		FileTree treeModel = new FileTree (new File(ConfigOptions.FILETREE_ROOT_PATH));
+		localTree = new FileTree (dir);
 		//JTree tree = new JTree();
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.setPreferredSize(new Dimension(200, 450));
-		scrollpane.getViewport().add(treeModel);
+		scrollpane.getViewport().add(localTree);
 		content.add(scrollpane);
 		return content;
 	}
 	
-	private JPanel initRightPanel()
+	private JPanel initRightPanel(java.io.File dir)
 	{
 		JPanel content = new JPanel();
-		JTree tree = new JTree();
+		//JTree tree = new JTree();
+		remoteTree = new FileTree(dir);
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.setPreferredSize(new Dimension(200, 450));
-		scrollpane.getViewport().add(tree);
+		scrollpane.getViewport().add(remoteTree);
 		content.add(scrollpane);
 		return content;
 	}

@@ -3,7 +3,9 @@ package driveTools;
 import java.awt.Dialog.ModalityType;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -11,6 +13,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
 import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
@@ -18,6 +21,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
+
+import org.python.core.util.FileUtil;
 
 import utils.ConfigOptions;
 import utils.MimeTypes;
@@ -69,6 +74,50 @@ public class GoogleAPI {
 		src.delete();
 	}
 	
+	public ArrayList<java.io.File> download(java.io.File file) {
+		if(file.isDirectory()) {
+			java.io.File tmpFolder = new java.io.File(ConfigOptions.TMP_FOLDER + file.getName());
+			tmpFolder.mkdirs();
+			String tmpFldrPath = tmpFolder.getAbsolutePath() + System.getProperty("file.separator");
+			ArrayList<java.io.File> fileList = new ArrayList<java.io.File>(file.list().length);
+			for (java.io.File f: file.listFiles()) {
+				System.out.println("DEBUG (driveTools.GoogleAPI: 85): Current file: " + f.getAbsolutePath());
+				if(!f.isDirectory()) {
+					DriveFileModel fileModel = new DriveFileModel(f.getAbsolutePath());
+					InputStream contentStream = _backend.download(fileModel);
+					java.io.File tmpFile = new java.io.File(tmpFldrPath + f.getName());
+					try {
+						FileOutputStream writer = new FileOutputStream(tmpFile);
+						writer.write(FileUtil.readBytes(contentStream));
+						writer.close();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					fileList.add(tmpFile);
+				}
+			}
+			return fileList;
+		}
+		
+		DriveFileModel fileModel = new DriveFileModel(file.getAbsolutePath());
+		InputStream contentStream = _backend.download(fileModel);
+		java.io.File tmpFile = new java.io.File(ConfigOptions.TMP_FOLDER + file.getName());
+		try {
+			FileOutputStream writer = new FileOutputStream(tmpFile);
+			writer.write(FileUtil.readBytes(contentStream));
+			writer.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		ArrayList<java.io.File> outArr = new ArrayList<java.io.File>(1);
+		outArr.add(tmpFile);
+		return outArr;
+	}
+	
+	public void delete(java.io.File file){
+		System.err.println("Not yet implemented. (Delete)");
+
+	}
 	/**
 	 * Synchronizes the contents on google Drive with the header files on the 
 	 * local file system.
@@ -88,7 +137,8 @@ public class GoogleAPI {
 		List<File> list = _backend.list();
 		System.out.println("Listing remote files: \n");
 		for (File f:list) {
-			System.out.println(f.getTitle() + " at:\t " + f.getAlternateLink());
+			//System.out.println(f.getTitle() + " at:\t " + f.getAlternateLink());
+			System.out.println(f);
 		}
 	}
 	
@@ -97,7 +147,7 @@ public class GoogleAPI {
 	 * Format: $Filename at:	$/ABSOLUTE/PATH/TO/FILE
 	 */
 	public void listLocalContents() {
-		java.io.File[] files = new java.io.File(ConfigOptions.FILE_SYNC_PATH).listFiles();
+		java.io.File[] files = new java.io.File(ConfigOptions.FILE_HEADER_PATH).listFiles();
 		System.out.println("Listing locally stored header files: \n");
 		for (java.io.File f: files) {
 			System.out.println(f.getName() + " at:\t " + f.getAbsolutePath());
@@ -107,7 +157,9 @@ public class GoogleAPI {
 	public static void main(String[] args) {
 		GoogleAPI api = new GoogleAPI(new EncryptionAPI());
 		//api.fetchDriveContents();
-		api.listRemoteContents();
+		//api.listRemoteContents();
+		//api.download(new java.io.File(ConfigOptions.FILE_HEADER_PATH + "data_sample_FC5.png"));
+		api.fetchDriveContents();
 	} 
 	//TODO: implement all the other file operations
 }

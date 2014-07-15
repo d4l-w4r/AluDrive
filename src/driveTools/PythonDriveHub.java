@@ -12,6 +12,7 @@ public class PythonDriveHub {
 
 	public PythonDriveHub() {
 		_interpreter = new PythonInterpreter();
+		
 		if (!new java.io.File(ConfigOptions.PYTHON_FILE_PATH + "__init__.py")
 				.exists()) {
 			try {
@@ -33,7 +34,7 @@ public class PythonDriveHub {
 		String line1 = "import sys";
 		String line2_1 = "sys.path.append(\"";
 		String line2_2 = "\")";
-		_interpreter.exec(line1 + "\n" + line2_1
+		_interpreter.exec(line1 + System.getProperty("line.separator") + line2_1
 				+ ConfigOptions.PYTHON_FILE_PATH + line2_2);
 	}
 

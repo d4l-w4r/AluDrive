@@ -19,6 +19,7 @@ import utils.ConfigOptions;
 import utils.ErrorDialog;
 
 import gui.MainWinGUI;
+import gui.MainWindowController;
 
 public class StartUP {
 
@@ -38,7 +39,7 @@ public class StartUP {
 			// handle exception
 		}
 
-		new MainWinGUI();
+		new MainWindowController();
 		
 	}
 	
@@ -55,23 +56,51 @@ public class StartUP {
 				new ErrorDialog(new Throwable("<html>Could not create the path<br>"+ConfigOptions.BASEPATH+"<br>Please check that you have sufficient permissions.<br></html>"));
 			}
 		}
-        if(!new File(ConfigOptions.FILE_SYNC_PATH).exists()) {
+        if(!new File(ConfigOptions.FILE_HEADER_PATH).exists()) {
 			try {
-				File name = new File(ConfigOptions.FILE_SYNC_PATH);
+				File name = new File(ConfigOptions.FILE_HEADER_PATH);
 				name.mkdirs();
 			} catch(SecurityException e) {
 				e.printStackTrace();
 			}
 		}
+        
+        if(!new File(ConfigOptions.CRYPTPATH).exists()) {
+        	try {
+				File name = new File(ConfigOptions.KEYPATH);
+				name.mkdirs();
+			} catch(SecurityException e) {
+				e.printStackTrace();
+			}
+        }
+        
+        if(!new File(ConfigOptions.KEYPATH).exists()) {
+        	try {
+				File name = new File(ConfigOptions.KEYPATH);
+				name.mkdirs();
+			} catch(SecurityException e) {
+				e.printStackTrace();
+			}
+        }
+        
         if(!new File(ConfigOptions.PYTHON_FILE_PATH).exists()) {
         	try {
         		File name = new File(ConfigOptions.PYTHON_FILE_PATH);
         		name.mkdirs();
-        		//Files.copy(new File("../../pyTools/fileLoader.py"), new File(ConfigOptions.PYTHON_FILE_PATH + "fileLoader.py"));
-        	} catch(SecurityException e) {
+        		Files.copy(new File("fileLoader.py"), new File(ConfigOptions.PYTHON_FILE_PATH + "fileLoader.py"));
+        	} catch(IOException e) {
         		e.printStackTrace();
         	}
         	
+        }
+        
+        if(!new File(ConfigOptions.FILE_DOWNLOAD_ROOT).exists()) {
+        	try {
+        		File name = new File(ConfigOptions.FILE_DOWNLOAD_ROOT);
+        		name.mkdirs();
+        	} catch(SecurityException e) {
+        		e.printStackTrace();
+        	}
         }
 	}
 	

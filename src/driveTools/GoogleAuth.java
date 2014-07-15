@@ -1,11 +1,18 @@
 package driveTools;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+
+import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
 
 import utils.ConfigOptions;
 import utils.ErrorDialog;
@@ -30,6 +37,7 @@ public class GoogleAuth {
 	private static String REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
 	private GoogleCredential _cred;
 	private final EncryptionAPI _crypt;
+	String googleAuth;
 
 	// utils
 	private HttpTransport httpTransport = new NetHttpTransport();
@@ -51,13 +59,15 @@ public class GoogleAuth {
 				Arrays.asList(DriveScopes.DRIVE)).setAccessType("offline")
 				.setApprovalPrompt("force").build();
 		
-		String url = flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI)
+		final String url = flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI)
 				.build();
 		
 		System.out.println("Please type in your authorization code");
 		WebViewTrial browser = new WebViewTrial();
 		browser.setVisible(true);
 		browser.loadURL(url);
+
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			String code = br.readLine();
