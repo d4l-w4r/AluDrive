@@ -23,22 +23,29 @@ public class MainWinGUI extends JFrame {
 	public JButton upload;
 	public JButton download;
 	public JButton delete;
+<<<<<<< HEAD
 	public FileTree treeModel;
 	public FileTree remoteTreeModel;
+=======
+	public JButton refresh;
+	
+	public FileTree localTree;
+	public FileTree remoteTree;
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 	public JMenuItem loadFile;
 	
-	public MainWinGUI()
+	public MainWinGUI(java.io.File localRoot, java.io.File remoteRoot)
 	{
 		super("GDrive File Coder");	
 		this.setSize(700, 500);
 		
 		JPanel menuPane = initMenuPanel();
 		this.setJMenuBar(initMenuBar());
-		_paneLeft = initLeftPanel();
-		_paneRight = initRightPanel();
+		_paneLeft = initLeftPanel(localRoot);
+		_paneRight = initRightPanel(remoteRoot);
 		
 
-			
+		
 		this.getContentPane().setLayout(new BorderLayout());
 		//this.getContentPane().add(menuPane, BorderLayout.NORTH);
 		this.getContentPane().add(_contentPane, BorderLayout.CENTER);
@@ -50,8 +57,9 @@ public class MainWinGUI extends JFrame {
 		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setPreferredSize(new Dimension(700, 504));
+		this.setLocationRelativeTo(null);
 		this.pack();
-		this.setResizable(false);
+		this.setResizable(true);
 		this.setVisible(true);
 	}
 	
@@ -74,6 +82,12 @@ public class MainWinGUI extends JFrame {
 		delete.setPreferredSize(new Dimension(90, 30));
 		delPanel.add(delete);
 		
+		JPanel refPanel = new JPanel();
+		refPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		refresh = new JButton("Refresh");
+		refresh.setPreferredSize(new Dimension(90,30));
+		refPanel.add(refresh);
+		
 		JPanel menuPane = new JPanel();
 		//menuPane.setBackground(Color.white);
 		menuPane.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -85,6 +99,7 @@ public class MainWinGUI extends JFrame {
 		menuPane.add(delPanel);
 		menuPane.add(downPanel);
 		menuPane.add(upPanel);
+		menuPane.add(refPanel);
 		menuPane.add(Box.createVerticalStrut(250));
 		return menuPane;
 	}
@@ -102,26 +117,37 @@ public class MainWinGUI extends JFrame {
 		return bar;
 	}
 	
-	private JPanel initLeftPanel()
+	private JPanel initLeftPanel(java.io.File dir)
 	{
 		JPanel content = new JPanel();
+<<<<<<< HEAD
 		treeModel = new FileTree (new File(ConfigOptions.FILETREE_ROOT_PATH));
+=======
+		localTree = new FileTree (dir);
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 		//JTree tree = new JTree();
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.setPreferredSize(new Dimension(200, 450));
-		scrollpane.getViewport().add(treeModel);
+		scrollpane.getViewport().add(localTree);
 		content.add(scrollpane);
 		return content;
 	}
 	
-	private JPanel initRightPanel()
+	private JPanel initRightPanel(java.io.File dir)
 	{
 		JPanel content = new JPanel();
 		//JTree tree = new JTree();
+<<<<<<< HEAD
 		remoteTreeModel = new FileTree(new File(ConfigOptions.FILE_SYNC_PATH));
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.setPreferredSize(new Dimension(200, 450));
 		scrollpane.getViewport().add(remoteTreeModel);
+=======
+		remoteTree = new FileTree(dir);
+		JScrollPane scrollpane = new JScrollPane();
+		scrollpane.setPreferredSize(new Dimension(200, 450));
+		scrollpane.getViewport().add(remoteTree);
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 		content.add(scrollpane);
 		return content;
 	}

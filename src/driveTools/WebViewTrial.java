@@ -32,11 +32,16 @@ public class WebViewTrial extends JFrame{
 
     private void initComponents() {
         createScene();
+<<<<<<< HEAD
         panel.add(new JLabel("I like to write stupid shit"), BorderLayout.NORTH);
         panel.add(jfxPanel, BorderLayout.CENTER);
         panel.add(new JButton("I do nothing... :("), BorderLayout.SOUTH);
         panel.add(new JLabel("..Blubb!"), BorderLayout.EAST);
         panel.add(new JLabel("Blibla.."), BorderLayout.WEST);
+=======
+        panel.add(jfxPanel, BorderLayout.CENTER);
+        
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
         getContentPane().add(panel);
 
         setPreferredSize(new Dimension(1024, 600));
@@ -54,7 +59,10 @@ public class WebViewTrial extends JFrame{
                 if (tmp == null) {
                     tmp = toURL("http://" + url);
                 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
                 engine.load(tmp);
             }
         });
@@ -104,16 +112,26 @@ public class WebViewTrial extends JFrame{
 
     }
     
+<<<<<<< HEAD
     public static void main(String[] args) {
+=======
+    /*public static void main(String[] args) {
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
                 WebViewTrial browser = new WebViewTrial();
                 browser.setVisible(true);
                 browser.loadURL("https://accounts.google.com/o/oauth2/auth?access_type=online&approval_prompt=auto&client_id=448650047220-m72n2idc18dcv7p2hpdevkjpnkhfhnf3.apps.googleusercontent.com&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/drive");
+<<<<<<< HEAD
                 //browser.loadURL("www.google.de");
             }
         });
     }
+=======
+            }
+        });
+    }*/
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 }
 

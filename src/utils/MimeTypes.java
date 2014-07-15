@@ -158,6 +158,7 @@ public class MimeTypes extends HashMap<String, String> {
 		this.put(".gif", "image/gif");
 		this.put(".gl", "video/gl");
 		this.put(".gl", "video/x-gl");
+		this.put(".googlDir", "application/vnd.google-apps.folder");
 		this.put(".gsd", "audio/x-gsm");
 		this.put(".gsm", "audio/x-gsm");
 		this.put(".gsp", "application/x-gsp");
@@ -659,8 +660,9 @@ public class MimeTypes extends HashMap<String, String> {
 		this.put(".zsh", "text/x-script.zsh");
 	}
 
-	public static String getType(String key) {
+	public static String getType(String path) {
 		MimeTypes mimes = new MimeTypes();
-		return mimes.get(key);
+		path = path.replaceAll("^.*\\.(.*)$", ".$1");
+		return mimes.get(path);
 	}
 }

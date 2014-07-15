@@ -3,9 +3,19 @@ package startup;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+<<<<<<< HEAD
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+=======
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.util.Properties;
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -13,10 +23,14 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
+import org.python.core.util.FileUtil;
+import org.python.google.common.io.Files;
+
 import utils.ConfigOptions;
 import utils.ErrorDialog;
 
 import gui.MainWinGUI;
+import gui.MainWindowController;
 
 public class StartUP {
 
@@ -24,7 +38,7 @@ public class StartUP {
 	
 	public static void main(String[] args) {
 		checkSetUp();
-		
+		//debugProperties();
 		try {
 			// Set System L&F
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -38,6 +52,7 @@ public class StartUP {
 			// handle exception
 		}
 
+<<<<<<< HEAD
 		final MainWinGUI gui = new MainWinGUI();
 		final MainController control = new MainController();
 		
@@ -68,6 +83,9 @@ public class StartUP {
 		});
 		
 		//debugProperties();
+=======
+		new MainWindowController();
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 		
 	}
 	
@@ -84,14 +102,56 @@ public class StartUP {
 				new ErrorDialog(new Throwable("<html>Could not create the path<br>"+ConfigOptions.BASEPATH+"<br>Please check that you have sufficient permissions.<br></html>"));
 			}
 		}
+<<<<<<< HEAD
 		if(!new File(ConfigOptions.FILE_SYNC_PATH).exists()) {
+=======
+        if(!new File(ConfigOptions.FILE_HEADER_PATH).exists()) {
+>>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 			try {
-				File name = new File(ConfigOptions.FILE_SYNC_PATH);
+				File name = new File(ConfigOptions.FILE_HEADER_PATH);
 				name.mkdirs();
 			} catch(SecurityException e) {
 				e.printStackTrace();
 			}
 		}
+        
+        if(!new File(ConfigOptions.CRYPTPATH).exists()) {
+        	try {
+				File name = new File(ConfigOptions.KEYPATH);
+				name.mkdirs();
+			} catch(SecurityException e) {
+				e.printStackTrace();
+			}
+        }
+        
+        if(!new File(ConfigOptions.KEYPATH).exists()) {
+        	try {
+				File name = new File(ConfigOptions.KEYPATH);
+				name.mkdirs();
+			} catch(SecurityException e) {
+				e.printStackTrace();
+			}
+        }
+        
+        if(!new File(ConfigOptions.PYTHON_FILE_PATH).exists()) {
+        	try {
+        		File name = new File(ConfigOptions.PYTHON_FILE_PATH);
+        		name.mkdirs();
+        		Files.copy(new File("fileLoader.py"), new File(ConfigOptions.PYTHON_FILE_PATH + "fileLoader.py"));
+        	} catch(IOException e) {
+        		e.printStackTrace();
+        	}
+        	
+        }
+        
+        if(!new File(ConfigOptions.FILE_DOWNLOAD_ROOT).exists()) {
+        	try {
+        		File name = new File(ConfigOptions.FILE_DOWNLOAD_ROOT);
+        		name.mkdirs();
+        	} catch(SecurityException e) {
+        		e.printStackTrace();
+        	}
+        }
 	}
 	
 	public static void debugProperties() {

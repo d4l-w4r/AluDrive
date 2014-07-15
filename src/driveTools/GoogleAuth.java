@@ -1,11 +1,18 @@
 package driveTools;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+
+import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
 
 import utils.ConfigOptions;
 import utils.ErrorDialog;
@@ -28,8 +35,9 @@ public class GoogleAuth {
 	private static String CLIENT_ID = "448650047220-m72n2idc18dcv7p2hpdevkjpnkhfhnf3.apps.googleusercontent.com";
 	private static String CLIENT_SECRET = "WkUlMoiFz5_foJYxzes-3--s";
 	private static String REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
-	private final GoogleCredential _cred;
+	private GoogleCredential _cred;
 	private final EncryptionAPI _crypt;
+	String googleAuth;
 
 	// utils
 	private HttpTransport httpTransport = new NetHttpTransport();
@@ -40,7 +48,7 @@ public class GoogleAuth {
 		if (!new java.io.File(ConfigOptions.CRED_STORE_PATH).exists()) {
 			_cred = makeCredential();
 		} else {
-			_cred = readCredential();
+			_cred = refreshAccessToken();
 		}
 	}
 
@@ -51,13 +59,15 @@ public class GoogleAuth {
 				Arrays.asList(DriveScopes.DRIVE)).setAccessType("offline")
 				.setApprovalPrompt("force").build();
 		
-		String url = flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI)
+		final String url = flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI)
 				.build();
 		
 		System.out.println("Please type in your authorization code");
 		WebViewTrial browser = new WebViewTrial();
 		browser.setVisible(true);
 		browser.loadURL(url);
+
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			String code = br.readLine();
@@ -133,14 +143,21 @@ public class GoogleAuth {
 		return cred;
 	}
 	
-	public boolean refreshAccessToken() throws IOException {
+	public GoogleCredential refreshAccessToken() {
 		GoogleCredential tmp = readCredential();
 		String refresh = tmp.getRefreshToken();
 		GoogleCredential cred = new GoogleCredential.Builder().setTransport(httpTransport).setJsonFactory(jsonFactory).setClientSecrets(CLIENT_ID, CLIENT_SECRET).build();
 		cred.setRefreshToken(refresh);
-		boolean response = cred.refreshToken();
-		storeCredential(cred);
-		return response;
+		boolean success = false;
+		try {
+			success = cred.refreshToken();
+		} catch(IOException e) {
+			System.err.println("ERROR (driveTools.GoogleAuth): Couldn't refresh AccessToken");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		System.out.println("DEBUG (driveTools.GoogleAuth): Token refreshed: " + success);
+		return cred;
 	}
 	
 	public GoogleCredential getCredential() {

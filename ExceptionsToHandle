@@ -1,0 +1,5 @@
+java.net.UnknownHostException _ Most likely cause: No internet connection
+
+java.net.SocketTimeoutException _ Most likely cause: Connection timed out. (Server or Clientside problems)
+
+javax.net.ssl.SSLHandshakeException _ Most likely cause: Network packages dropped

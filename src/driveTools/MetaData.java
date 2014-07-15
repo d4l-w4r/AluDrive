@@ -24,7 +24,7 @@ public class MetaData extends HashMap<String, String> {
 	private void debugEntries() {
 		Set<String> keys = this.keySet();
 		for (String key: keys) {
-			System.out.println("DEBUG (driveTools.MetaData): " + this.get(key));
+			System.out.println("DEBUG (driveTools.MetaData): " + key + " = " + this.get(key));
 		}
 	}
 }
