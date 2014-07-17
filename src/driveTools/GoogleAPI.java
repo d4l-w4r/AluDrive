@@ -14,7 +14,10 @@ import java.security.spec.InvalidParameterSpecException;
 import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -22,10 +25,13 @@ import javax.crypto.NoSuchPaddingException;
 import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 
-import org.python.core.util.FileUtil;
+import org.apache.commons.io.IOUtils;
+
 
 import utils.ConfigOptions;
 import utils.MimeTypes;
+
+import alternateGui.GUIConstants;
 
 import com.google.api.client.googleapis.media.MediaHttpUploader.UploadState;
 import com.google.api.client.util.DateTime;
@@ -34,14 +40,26 @@ import com.google.api.services.drive.model.File;
 import cryptoTools.EncryptionAPI;
 import cryptoTools.ProgressDialog;
 
-public class GoogleAPI {
+public class GoogleAPI extends Observable{
 
 	private final GoogleAuth _auth;
 	private final GoogleBackend _backend;
 	
-	public GoogleAPI(EncryptionAPI crypt) {
+	public GoogleAPI(EncryptionAPI crypt, Observer o) {
+		super();
+		addObserver(o);
 		_auth = new GoogleAuth(crypt);
 		_backend = new GoogleBackend(_auth.getCredential());
+		String img = getUserImage();
+		setChanged();
+		notifyObservers(img);
+		String name = getUserName();
+		setChanged();
+		notifyObservers(name);
+		HashMap<String, Long> capacity = getDriveCapacity();
+		System.out.println(capacity.get("used") + ", of " + capacity.get("max"));
+		setChanged();
+		notifyObservers(capacity);
 	}
 	
 	/**
@@ -88,7 +106,7 @@ public class GoogleAPI {
 					java.io.File tmpFile = new java.io.File(tmpFldrPath + f.getName());
 					try {
 						FileOutputStream writer = new FileOutputStream(tmpFile);
-						writer.write(FileUtil.readBytes(contentStream));
+						writer.write(IOUtils.toByteArray(contentStream));
 						writer.close();
 					} catch(IOException e) {
 						e.printStackTrace();
@@ -104,7 +122,7 @@ public class GoogleAPI {
 		java.io.File tmpFile = new java.io.File(ConfigOptions.TMP_FOLDER + file.getName());
 		try {
 			FileOutputStream writer = new FileOutputStream(tmpFile);
-			writer.write(FileUtil.readBytes(contentStream));
+			writer.write(IOUtils.toByteArray(contentStream));
 			writer.close();
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -154,12 +172,46 @@ public class GoogleAPI {
 		}
 	}
 	
+	public String getUserImage() {
+		InputStream is = _backend.getUserImage();
+		String path = GUIConstants.iconPack + "userImg";
+		try {
+			FileOutputStream writer = new FileOutputStream(path);
+			writer.write(IOUtils.toByteArray(is));
+			writer.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		return path;
+	}
+	
+	public String getUserName() {
+		return _backend.getUserName();
+	}
+	
+	public HashMap<String, Long> getDriveCapacity() {
+		return _backend.getDriveCapacity();
+	}
+	
+	public void refreshDriveInfo() {
+		String img = getUserImage();
+		setChanged();
+		notifyObservers(img);
+		String name = getUserName();
+		setChanged();
+		notifyObservers(name);
+		HashMap<String, Long> map = getDriveCapacity();
+		setChanged();
+		notifyObservers(map);
+	}
+	
 	public static void main(String[] args) {
-		GoogleAPI api = new GoogleAPI(new EncryptionAPI());
+		GoogleAPI api = new GoogleAPI(new EncryptionAPI(), null);
 		//api.fetchDriveContents();
 		//api.listRemoteContents();
 		//api.download(new java.io.File(ConfigOptions.FILE_HEADER_PATH + "data_sample_FC5.png"));
-		api.fetchDriveContents();
+		//api.fetchDriveContents();
+		System.out.println(api.getUserImage());
 	} 
 	//TODO: implement all the other file operations
 }

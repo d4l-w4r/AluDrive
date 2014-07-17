@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
@@ -41,23 +42,63 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentList;
 import com.google.api.services.drive.model.ParentReference;
+import com.google.api.services.drive.model.User.Picture;
 
 import cryptoTools.ProgressDialog;
 
-public class GoogleBackend {
+public class GoogleBackend extends Observable{
 
 	private final Drive _service;
 
 	// utils
 	private HttpTransport httpTransport = new NetHttpTransport();
 	private JsonFactory jsonFactory = new JacksonFactory();
-	private PythonDriveHub pythonHub = new PythonDriveHub();
+	//private PythonDriveHub pythonHub = new PythonDriveHub();
 
 	public GoogleBackend(GoogleCredential cred) {
 		_service = new Drive.Builder(httpTransport, jsonFactory, cred)
 				.setApplicationName("AluDrive 0.1-alpha").build();
 	}
 
+	protected InputStream getUserImage() {
+		try {
+			About about = _service.about().get().execute();
+			String url = about.getUser().getPicture().getUrl();
+			url = url.replaceAll("s64", "s128");
+			System.out.println(url);
+			
+			HttpResponse resp =
+		            _service.getRequestFactory().buildGetRequest(new GenericUrl(url))
+		                .execute();
+		        return resp.getContent();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	protected String getUserName() {
+		try {
+			About about = _service.about().get().execute();
+			return about.getUser().getDisplayName();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
+	protected HashMap<String, Long> getDriveCapacity() {
+		HashMap<String, Long> out = new HashMap<>();
+		try {
+			About about = _service.about().get().execute();
+			out.put("max", about.getQuotaBytesTotal());
+			out.put("used", about.getQuotaBytesUsed());
+			return out;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return out;
+	}
 	protected void upload(java.io.File sourceFile, MetaData meta) {
 		final File body = new File();
 		body.setTitle(meta.get("title"));
@@ -303,7 +344,7 @@ public class GoogleBackend {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		pythonHub.buildLocalHeaders();
+		//pythonHub.buildLocalHeaders();
 	}
 	
 }

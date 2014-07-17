@@ -19,7 +19,7 @@ public class DirListing {
 
       // Existiert angegebenes Verzeichnis ?
       if (!directory.exists()) {
-         System.out.println("DEBUG (tests.DirListing): Das Verzeichnis "
+         System.out.println("Das Verzeichnis "
                             + "existiert nicht!");
       } else {
          displayListing(directory);
@@ -32,7 +32,7 @@ public class DirListing {
       // Inhalt von directory
       File[] files = directory.listFiles(); 
 
-      System.out.println("DEBUG (tests.DirListing): Der Inhalt von "
+      System.out.println("Der Inhalt von "
                          + directory.getName() + " :");
       System.out.println();
 
@@ -40,14 +40,14 @@ public class DirListing {
          File file = files[i];
 
          // Modifikationsdatum
-         System.out.print("DEBUG (tests.DirListing): " + new Date(file.lastModified())
+         System.out.print(new Date(file.lastModified())
                           + "\t");
 
          // Verzeichnis oder Datei ?
          if (file.isDirectory()) {
             System.out.print("<DIR>\t");
          } else {    
-            // Nur die Lï¿½nge einer Datei interessiert
+            // Nur die Länge einer Datei interessiert
             System.out.print("\t" + file.length());
          }
 

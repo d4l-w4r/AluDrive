@@ -23,15 +23,10 @@ public class MainWinGUI extends JFrame {
 	public JButton upload;
 	public JButton download;
 	public JButton delete;
-<<<<<<< HEAD
-	public FileTree treeModel;
-	public FileTree remoteTreeModel;
-=======
 	public JButton refresh;
 	
 	public FileTree localTree;
 	public FileTree remoteTree;
->>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 	public JMenuItem loadFile;
 	
 	public MainWinGUI(java.io.File localRoot, java.io.File remoteRoot)
@@ -120,11 +115,7 @@ public class MainWinGUI extends JFrame {
 	private JPanel initLeftPanel(java.io.File dir)
 	{
 		JPanel content = new JPanel();
-<<<<<<< HEAD
-		treeModel = new FileTree (new File(ConfigOptions.FILETREE_ROOT_PATH));
-=======
 		localTree = new FileTree (dir);
->>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 		//JTree tree = new JTree();
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.setPreferredSize(new Dimension(200, 450));
@@ -137,17 +128,10 @@ public class MainWinGUI extends JFrame {
 	{
 		JPanel content = new JPanel();
 		//JTree tree = new JTree();
-<<<<<<< HEAD
-		remoteTreeModel = new FileTree(new File(ConfigOptions.FILE_SYNC_PATH));
-		JScrollPane scrollpane = new JScrollPane();
-		scrollpane.setPreferredSize(new Dimension(200, 450));
-		scrollpane.getViewport().add(remoteTreeModel);
-=======
 		remoteTree = new FileTree(dir);
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.setPreferredSize(new Dimension(200, 450));
 		scrollpane.getViewport().add(remoteTree);
->>>>>>> 9d54729123a10fac1106286540c9ca0ffaa47f4c
 		content.add(scrollpane);
 		return content;
 	}

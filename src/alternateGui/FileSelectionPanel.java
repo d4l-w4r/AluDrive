@@ -12,6 +12,7 @@ import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,7 +23,11 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.ScrollBarUI;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
@@ -139,6 +144,7 @@ public class FileSelectionPanel extends JPanel{
 		
 		MyScrollbarUI myUI = new MyScrollbarUI();
 		myUI.destroyDefaultLandL();
+		
 		myBar.setUI(myUI);
 		this.add(scrollPane, BorderLayout.CENTER);
 		this.setBackground(Color.white);

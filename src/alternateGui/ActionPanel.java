@@ -14,12 +14,20 @@ import javax.swing.JPanel;
 public class ActionPanel extends JPanel {
 	private static final long serialVersionUID = 6847028417991009408L;
 	
+	public JButton addBtn;
+	public JButton removeBtn;
+	public JButton refreshBtn;
+	
 	public ActionPanel() {
 		super();
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 2));
-		this.add(initRefreshButton());
-		this.add(initAddButton());
-		this.add(initRemoveButton());
+		addBtn = initAddButton();
+		removeBtn = initRemoveButton();
+		refreshBtn = initRefreshButton();
+		
+		this.add(refreshBtn);
+		this.add(addBtn);
+		this.add(removeBtn);
 		this.setBackground(GUIConstants.elementBG);
 	}
 	

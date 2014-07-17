@@ -4,7 +4,11 @@ import java.awt.Rectangle;
 
 import javax.swing.JButton;
 import javax.swing.JScrollBar;
+import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 
 public class MyScrollbarUI extends BasicScrollBarUI {
@@ -32,6 +36,10 @@ public class MyScrollbarUI extends BasicScrollBarUI {
 	public void destroyDefaultLandL() {
 		createDecreaseButton(0);
 		createIncreaseButton(0);
-		trackColor = Color.red;
+		UIManager.put("ScrollBar.thumb", new ColorUIResource(130, 129, 129));
+		UIManager.put("ScrollBar.thumbDarkShadow", new ColorUIResource(130, 129, 129));
+		UIManager.put("ScrollBar.thumbHighlight", new ColorUIResource(130, 129, 129));
+		UIManager.put("ScrollBar.thumbShadow", new ColorUIResource(130, 129, 129));
+		UIManager.put("ScrollBar.width", 14);
 	}
 }
